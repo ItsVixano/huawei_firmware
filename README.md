@@ -18,9 +18,6 @@ $ ./huawei-firmware.sh --device STF --fw-base 9.1.0.231 --zip update_full_base.z
 $ ./huawei-firmware.sh --device STF --fw-base 9.1.0.231 --update-app UPDATE.APP
 ```
 
-## Todo
-- Implement v(ab) support.
-
 ## Credits
 - [`R0rt1z2/hisi-playground`](https://github.com/R0rt1z2/hisi-playground)
 - [`Huawei Firm Finder`](https://professorjtj.github.io/)

@@ -32,6 +32,7 @@ image_blocklist=(
     "ERECOVERY_VBMETA"
     "ERECOVERY_VENDOR"
     "KERNEL"
+    "KPATCH"
     "ODM"
     "PACKAGE_TYPE"
     "PATCH"
@@ -127,9 +128,11 @@ done
 LOGI "Generating \`${MY_DIR}/output/flash_fw.sh\` ..."
 echo -e "#!/bin/bash\n# Genearted with \`huawei-firmware.sh\` script\n\nfastboot erase misc\n" > ${MY_DIR}/output/flash_fw.sh
 for image in "${fastboot_first_stage[@]}"; do
+    # EMUI 9>
     if [ "$image" == "HISIUFS_GPT" ] && [ -f "${MY_DIR}/output/images/${image}.img" ]; then
         echo -e "fastboot flash ptable images/HISIUFS_GPT.img" >> ${MY_DIR}/output/flash_fw.sh
         continue
+    # EMUI 8<
     elif [ "$image" == "EFI" ] && [ -f "${MY_DIR}/output/images/${image}.img" ]; then
         echo -e "fastboot flash ptable images/EFI.img" >> ${MY_DIR}/output/flash_fw.sh
         continue
@@ -152,9 +155,11 @@ chmod +x ${MY_DIR}/output/flash_fw.sh
 LOGI "Generating \`${MY_DIR}/output/flash_fw.bat\` ..."
 echo -e "@echo off\nREM Generated with \`huawei-firmware.sh\` script\n\nfastboot erase misc\n" > ${MY_DIR}/output/flash_fw.bat
 for image in "${fastboot_first_stage[@]}"; do
+    # EMUI 9>
     if [ "$image" == "HISIUFS_GPT" ] && [ -f "${MY_DIR}/output/images/${image}.img" ]; then
         echo -e "fastboot flash ptable images\HISIUFS_GPT.img" >> ${MY_DIR}/output/flash_fw.bat
         continue
+    # EMUI 8<
     elif [ "$image" == "EFI" ] && [ -f "${MY_DIR}/output/images/${image}.img" ]; then
         echo -e "fastboot flash ptable images\\\EFI.img" >> ${MY_DIR}/output/flash_fw.bat
         continue
