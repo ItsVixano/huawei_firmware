@@ -71,35 +71,54 @@ while [ "$#" -gt 0 ]; do
                 FW_BASE=${2}
                 ;;
         -z|--zip)
-                UPDATE_PACKAGE=${MY_DIR}/${2}
+                UPDATE_PACKAGE_ZIP=${2}
+                ;;
+        -u|--update-app)
+                UPDATE_PACKAGE_APP=${2}
                 ;;
     esac
     shift
 done
 
-if [[ -z ${UPDATE_PACKAGE} || -z ${FW_BASE} || -z ${DEVICE} ]]; then
-    LOGE "Please define the required values \`-d|--device\`, \`-f|--fw-base\` and \`-z|--zip\`"
+if [[ -z ${DEVICE} || -z ${FW_BASE} || (-z ${UPDATE_PACKAGE_ZIP} && -z ${UPDATE_PACKAGE_APP}) ]]; then
+    LOGE "Please define the required values \`-d|--device\`, \`-f|--fw-base\` and either \`-z|--zip\` or \`-u|--update-app\`"
     exit 0
+fi
+
+if [[ -n ${UPDATE_PACKAGE_ZIP} && -n ${UPDATE_PACKAGE_APP} ]]; then
+    LOGE "Please define either \`-z|--zip\` or \`-u|--update-app\`, not both."
+    exit 1
 fi
 
 # Cleanup dir
 rm -rf ${MY_DIR}/output ${MY_DIR}/working
+mkdir ${MY_DIR}/working ${MY_DIR}/output
 
 # Extract UPDATE.app
-if [ ! -f "${UPDATE_PACKAGE}" ]; then
-    LOGE "Zip file ${UPDATE_PACKAGE} does not exist."
+if [ -f "${UPDATE_PACKAGE_ZIP}" ]; then
+    if ! unzip -l "${UPDATE_PACKAGE_ZIP}" 2> /dev/null | grep -q "UPDATE.APP"; then
+        LOGE "\`UPDATE.APP\` file does not exist in the zip package."
+        exit 1
+    fi
+
+    LOGI "Extracting \`UPDATE.APP\` from \`${UPDATE_PACKAGE_ZIP}\`..."
+    if ! unzip -j ${UPDATE_PACKAGE_ZIP} UPDATE.APP -d ${MY_DIR}/working &> /dev/null; then
+        LOGE "Failed to unzip \`${UPDATE_PACKAGE_ZIP}\`. It may not be a valid zip file."
+        exit 1
+    fi
+elif [ -f "${UPDATE_PACKAGE_APP}" ]; then
+    # Directly copy the UPDATE.APP file on working/
+    cp ${UPDATE_PACKAGE_APP} ${MY_DIR}/working
+else
+    LOGE "Neither zip file \`${UPDATE_PACKAGE_ZIP}\` nor app file \`${UPDATE_PACKAGE_APP}\` exists."
     exit 1
 fi
 
-if ! unzip -l "${UPDATE_PACKAGE}" | grep -q "UPDATE.APP"; then
-    LOGE "UPDATE.APP file does not exist in the zip package."
+LOGI "Extracting \`UPDATE.APP\` using \`update-extractor.py\`..."
+if ! ${MY_BINS}/update-extractor.py ${MY_DIR}/working/UPDATE.APP -e -o ${MY_DIR}/output/images &> /dev/null; then
+    LOGE "Failed to extract \`UPDATE.APP\` using \`update-extractor.py\`."
     exit 1
 fi
-
-LOGI "Extracting \`UPDATE.APP\` from \`${UPDATE_PACKAGE}\`..."
-mkdir ${MY_DIR}/working ${MY_DIR}/output
-unzip -j ${UPDATE_PACKAGE} UPDATE.APP -d ${MY_DIR}/working &> /dev/zero
-${MY_BINS}/update-extractor.py ${MY_DIR}/working/UPDATE.APP -e -o ${MY_DIR}/output/images &> /dev/zero
 for image in ${image_blocklist[@]}; do
     rm -rf ${MY_DIR}/output/images/${image}.img
 done
