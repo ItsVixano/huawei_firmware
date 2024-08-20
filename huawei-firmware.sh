@@ -126,7 +126,7 @@ done
 
 # Generate fastboot script (Linux)
 LOGI "Generating \`${MY_DIR}/output/flash_fw.sh\` ..."
-echo -e "#!/bin/bash\n# Genearted with \`huawei-firmware.sh\` script\n\nfastboot erase misc\n" > ${MY_DIR}/output/flash_fw.sh
+echo -e "#!/bin/bash\n# Generated with \`huawei-firmware.sh\` script\n\nfastboot erase misc\n" > ${MY_DIR}/output/flash_fw.sh
 for image in "${fastboot_first_stage[@]}"; do
     # EMUI 9>
     if [ "$image" == "HISIUFS_GPT" ] && [ -f "${MY_DIR}/output/images/${image}.img" ]; then
