@@ -145,6 +145,11 @@ done
 echo -e "\nsleep 1\n\nfastboot reboot bootloader\n\nsleep 1\n" >>${MY_DIR}/output/flash_fw.sh
 for image in ${MY_DIR}/output/images/*.img; do
     image_name=$(basename ${image} .img)
+    # EMUI 10>
+    if [ "${image_name}" == "VBMETA_HW_PRODUC" ]; then
+        echo -e "fastboot flash vbmeta_hw_product images/VBMETA_HW_PRODUC.img" >>${MY_DIR}/output/flash_fw.sh
+        continue
+    fi
     if [[ ! "${fastboot_first_stage[@]}" =~ "${image_name}" ]]; then
         echo -e "fastboot flash ${image_name,,} images/${image_name}.img" >>${MY_DIR}/output/flash_fw.sh
     fi
@@ -172,6 +177,11 @@ done
 echo -e "\ntimeout /T 1 /nobreak\n\nfastboot reboot bootloader\n\ntimeout /T 1 /nobreak\n" >>${MY_DIR}/output/flash_fw.bat
 for image in ${MY_DIR}/output/images/*.img; do
     image_name=$(basename ${image} .img)
+    # EMUI 10>
+    if [ "${image_name}" == "VBMETA_HW_PRODUC" ]; then
+        echo -e "fastboot flash vbmeta_hw_product images\VBMETA_HW_PRODUC.img" >>${MY_DIR}/output/flash_fw.bat
+        continue
+    fi
     if [[ ! "${fastboot_first_stage[@]}" =~ "${image_name}" ]]; then
         echo -e "fastboot flash ${image_name,,} images\\${image_name}.img" >>${MY_DIR}/output/flash_fw.bat
     fi
