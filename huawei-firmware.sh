@@ -31,7 +31,6 @@ image_blocklist=(
     "ERECOVERY_RAMDIS"
     "ERECOVERY_VBMETA"
     "ERECOVERY_VENDOR"
-    "KERNEL"
     "KPATCH"
     "ODM"
     "PACKAGE_TYPE"
