@@ -27,10 +27,6 @@ image_blocklist=(
     "CUST"
     "ENG_SYSTEM"
     "ENG_VENDOR"
-    "ERECOVERY_KERNEL"
-    "ERECOVERY_RAMDIS"
-    "ERECOVERY_VBMETA"
-    "ERECOVERY_VENDOR"
     "KPATCH"
     "ODM"
     "PACKAGE_TYPE"
@@ -41,9 +37,6 @@ image_blocklist=(
     "PRETVS"
     "PRODUCT"
     "RAMDISK"
-    "RECOVERY_RAMDISK"
-    "RECOVERY_VBMETA"
-    "RECOVERY_VENDOR"
     "SHA256RSA"
     "SUPER"
     "SYSTEM"
@@ -149,6 +142,12 @@ for image in ${MY_DIR}/output/images/*.img; do
         echo -e "fastboot flash vbmeta_hw_product images/VBMETA_HW_PRODUC.img" >>${MY_DIR}/output/flash_fw.sh
         continue
     fi
+    # EMUI 5>
+    if [ "${image_name}" == "ERECOVERY_RAMDIS" ]; then
+        echo -e "fastboot flash erecovery_ramdisk images/ERECOVERY_RAMDIS.img" >>${MY_DIR}/output/flash_fw.sh
+        continue
+    fi
+
     if [[ ! "${fastboot_first_stage[@]}" =~ "${image_name}" ]]; then
         echo -e "fastboot flash ${image_name,,} images/${image_name}.img" >>${MY_DIR}/output/flash_fw.sh
     fi
@@ -181,6 +180,12 @@ for image in ${MY_DIR}/output/images/*.img; do
         echo -e "fastboot flash vbmeta_hw_product images\VBMETA_HW_PRODUC.img" >>${MY_DIR}/output/flash_fw.bat
         continue
     fi
+    # EMUI 5>
+    if [ "${image_name}" == "ERECOVERY_RAMDIS" ]; then
+        echo -e "fastboot flash erecovery_ramdisk images\ERECOVERY_RAMDIS.img" >>${MY_DIR}/output/flash_fw.bat
+        continue
+    fi
+
     if [[ ! "${fastboot_first_stage[@]}" =~ "${image_name}" ]]; then
         echo -e "fastboot flash ${image_name,,} images\\${image_name}.img" >>${MY_DIR}/output/flash_fw.bat
     fi
